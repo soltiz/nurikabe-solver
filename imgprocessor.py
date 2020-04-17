@@ -247,10 +247,15 @@ def lcfind(origimg):
                 
                 #print("x=%d y=%d val=%s"%(xl,yl,digits[xl][yl]))
 
-
     #    print(digits)
     show(img)
 
+    for yl in range(0,nbrows):
+        rowstring = ""
+        for xl in range(0,nbcols):
+            rowstring = rowstring + " " + digits[xl][yl]
+        print (rowstring)
+    
 
 
     #d = pytesseract.image_to_data(digit_img, output_type=Output.DICT)
