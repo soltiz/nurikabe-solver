@@ -207,9 +207,22 @@ def lcfind(img):
         print ("Horizontal line at y=%d"%(y))
         cv2.line(img,(xmin,y),(xmax,y),(0,0,255),2)
     
-    show(img)
-
+    
     print ("There were %d vertical lines and %d horizontal  lines"%(len(cols), len(rows)))
+
+    gs = get_grayscale(img)
+    thim = thresholding(gs)
+
+
+    #show (img)
+
+    imgs =  [ [ thim[rows[yl]+2:rows[yl+1]-2, cols[xl]+2:cols[xl+1]-2]  for yl in range(0,len(rows)-1)] for xl in range (0,len(cols)-1) ] 
+ #           d = pytesseract.image_to_data(crop_img, output_type=Output.DICT)
+    show (imgs[2][1]) # 3eme ligne en partant du haut, 2ème colonne en partant de la gauche
+
+
+    show(img)
+    #show(imgs[2][1])
 
    
 def HoughlinesP(img):
