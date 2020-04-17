@@ -164,18 +164,18 @@ def keep_periodic_values(list):
     return [ v  for (v,ib,ia) in values_with_intervals if ( abs(ib-period) < 5 or abs(ia-period) < 5 )]
 
 
-def lcfind(img):
+def lcfind(origimg):
 
-    dimensions = img.shape
+    dimensions = origimg.shape
      
     # height, width, number of channels in image
-    height = img.shape[0]
-    width = img.shape[1]
-    channels = img.shape[2]
+    height = origimg.shape[0]
+    width = origimg.shape[1]
+    channels = origimg.shape[2]
  
     print("Height = %d   Width = %d"%(width,height))
 
-    gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(origimg,cv2.COLOR_BGR2GRAY)
     edges = cv2.Canny(gray,50,150,apertureSize = 3)
 
     lines = cv2.HoughLines(edges,1,np.pi/4,300)
@@ -200,6 +200,7 @@ def lcfind(img):
     xmax = max(cols)
     ymin = min(rows)
     ymax = max(rows)
+    img = origimg
     for x in cols:
         print ("Vertical line at x=%d"%(x))
         cv2.line(img,(x,ymin),(x,ymax),(0,0,255),2)
@@ -217,12 +218,46 @@ def lcfind(img):
     #show (img)
 
     imgs =  [ [ thim[rows[yl]+2:rows[yl+1]-2, cols[xl]+2:cols[xl+1]-2]  for yl in range(0,len(rows)-1)] for xl in range (0,len(cols)-1) ] 
- #           d = pytesseract.image_to_data(crop_img, output_type=Output.DICT)
-    show (imgs[2][1]) # 3eme ligne en partant du haut, 2ème colonne en partant de la gauche
 
+
+    #digit_img = imgs[2][1] # 3eme ligne en partant du haut, 2ème colonne en partant de la gauche
+    #show (digit_img) # 3eme ligne en partant du haut, 2ème colonne en partant de la gauche
+    
+    # Adding custom options
+    custom_config = r'--oem 3 --psm 6'
+    #print(pytesseract.image_to_string(digit_img, config=custom_config))
+    
+    nbcols = len(cols) -1
+    nbrows = len(rows) - 1
+
+    digits=[]
+    for img_col in imgs:
+        col_digits = [ pytesseract.image_to_string(digit_img, config=custom_config) for digit_img in img_col]
+        digits.append(col_digits)
+
+
+    print (digits[2][1]) # 3eme ligne en partant du haut, 2ème colonne en partant de la gauche
 
     show(img)
-    #show(imgs[2][1])
+
+    for xl in range(0,nbcols):
+        for yl in range(0,nbrows):
+            if digits[xl][yl] == "":
+                cv2.rectangle(img,(cols[xl],rows[yl]),(cols[xl+1],rows[yl+1]),(0,0,0),-1)
+                
+                #print("x=%d y=%d val=%s"%(xl,yl,digits[xl][yl]))
+
+
+    #    print(digits)
+    show(img)
+
+
+
+    #d = pytesseract.image_to_data(digit_img, output_type=Output.DICT)
+    #print(d)
+#
+ #   show(img)
+  
 
    
 def HoughlinesP(img):
