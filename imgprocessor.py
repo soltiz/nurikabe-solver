@@ -196,6 +196,8 @@ def lcfind(origimg):
     rows = keep_periodic_values([v for v,w in rows])
     cols = keep_periodic_values([v for v,w in cols])       
 
+    gridperiod = rows[1] - rows [0]
+
     xmin = min(cols)
     xmax = max(cols)
     ymin = min(rows)
@@ -240,10 +242,19 @@ def lcfind(origimg):
 
     show(img)
 
+    digits[3][1]="X"
+    digits[2][2]="X"
+    digits[0][2]="X"
+    digits[1][1]="X"
+    digits[2][0]="."
+
     for xl in range(0,nbcols):
         for yl in range(0,nbrows):
-            if digits[xl][yl] == "":
+            if digits[xl][yl] == "X":
                 cv2.rectangle(img,(cols[xl],rows[yl]),(cols[xl+1],rows[yl+1]),(0,0,0),-1)
+            elif digits[xl][yl] == ".":
+                cv2.circle(img,(int((cols[xl]+cols[xl+1])/2),int((rows[yl]+rows[yl+1])/2)), int(gridperiod/10),(0,0,0),-1)
+
                 
                 #print("x=%d y=%d val=%s"%(xl,yl,digits[xl][yl]))
 
